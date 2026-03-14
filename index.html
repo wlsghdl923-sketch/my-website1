@@ -33,7 +33,7 @@ body{font-family:'Noto Sans KR',sans-serif;font-weight:400;background:var(--bg);
 
 /* ── DOC VIEWER ── */
 .dv-wrap{display:flex;flex-direction:column;height:100vh;}
-.dv-nav{height:var(--nh);background:rgba(255,255,255,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;}
+.dv-nav{height:var(--nh);background:#fff;border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 24px;gap:12px;flex-shrink:0;}
 .dv-back{background:none;border:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:.86rem;font-weight:600;color:var(--t2);transition:color .15s;padding:0;display:flex;align-items:center;gap:5px;}
 .dv-back:hover{color:var(--P);}
 .dv-title{font-size:.95rem;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -42,13 +42,13 @@ body{font-family:'Noto Sans KR',sans-serif;font-weight:400;background:var(--bg);
 #docFrame{flex:1;border:none;width:100%;}
 
 /* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--nh);background:rgba(255,255,255,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--nh);background:#fff;.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:var(--nh);background:rgba(255,255,255,.93);backdrop-filter:blur(16px);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 28px;}
 .nav-logo{font-size:1.1rem;font-weight:800;text-decoration:none;letter-spacing:-.02em;margin-right:36px;white-space:nowrap;color:var(--logo-color);}
 .nav-links{display:flex;gap:2px;flex:1;}
 .nav-link{padding:7px 14px;border-radius:8px;font-size:.88rem;font-weight:600;color:var(--t2);text-decoration:none;transition:background .15s,color .15s;}
 .nav-link:hover{background:#F2F3F6;color:var(--t);}
 .nav-link.active{color:var(--P);background:var(--PL);}
-.nav-gear{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:#fff;cursor:pointer;font-size:.95rem;color:var(--t3);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.nav-gear{width:34px;height:34px;border-radius:8px;border:1px solid var(--bd);background:#fff;cursor:pointer;font-size:.95rem;color:var(--t3);display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:34px;padding-bottom:1px;}
 .nav-gear:hover{border-color:var(--P);color:var(--P);}
 
 /* ── HERO ── */
@@ -91,7 +91,7 @@ footer{border-top:1px solid var(--bd);background:var(--sf);padding:28px 48px;}
 @media(max-width:900px){.cal-yearly{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:768px){
   .hero,.section,.cal-section{padding-left:20px;padding-right:20px;}
-  .hero{padding-top:calc(var(--nh)+64px);padding-bottom:80px;}
+  .hero{padding-top:calc(var(--nh)+120px);padding-bottom:140px;}
   .nav{padding:0 16px;}
   .nav-links .nav-link{display:none;}
   .cal-yearly{grid-template-columns:repeat(2,1fr);}
@@ -116,7 +116,7 @@ footer{border-top:1px solid var(--bd);background:var(--sf);padding:28px 48px;}
 .card-add:hover{border-color:var(--P);color:var(--P);}
 
 /* ── CARD DETAIL ── */
-.cdv-nav{position:sticky;top:0;height:var(--nh);background:rgba(255,255,255,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 24px;gap:12px;z-index:5;}
+.cdv-nav{position:sticky;top:0;height:var(--nh);background:#fff;.cdv-nav{position:sticky;top:0;height:var(--nh);background:rgba(255,255,255,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 24px;gap:12px;z-index:5;}
 .cdv-body{max-width:800px;margin:0 auto;padding:40px 24px 80px;}
 .cdv-banner{width:100%;height:290px;border-radius:var(--r);overflow:hidden;background:#ECEEF2;margin-bottom:28px;display:flex;align-items:center;justify-content:center;font-size:3rem;}
 .cdv-banner img{width:100%;height:100%;object-fit:cover;}
