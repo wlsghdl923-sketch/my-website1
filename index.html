@@ -820,15 +820,8 @@ function _applyMap(map){
 async function initData(){
   const hasCacheData = localStorage.getItem('hub_cfg') !== null;
 
-  if(hasCacheData){
-    _sb.from('site_data').select('key, value').then(({data,error})=>{
-      if(!error && data && data.length > 0){
-        const map={};
-        data.forEach(row=>map[row.key]=row.value);
-        _applyMap(map);
-      }
-    }).catch(e=>console.warn('백그라운드 동기화 실패:', e));
-
+   if(hasCacheData){
+    // 캐시 있음 - 즉시 표시 (동기화 불필요)
   } else {
     const overlay = document.getElementById('loadingOverlay');
     if(overlay) overlay.style.display='flex';
