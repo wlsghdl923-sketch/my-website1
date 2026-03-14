@@ -826,13 +826,6 @@ async function initData(){
         const map={};
         data.forEach(row=>map[row.key]=row.value);
         _applyMap(map);
-        if(typeof applyColors==='function') applyColors();
-        if(typeof applyConfig==='function') applyConfig();
-        if(typeof renderSection==='function' && !IS_SHARE){
-          renderSection('docs');renderSection('webtoon');
-          if(typeof renderLegend==='function') renderLegend();
-          if(typeof renderMonthly==='function') renderMonthly();
-        }
       }
     }).catch(e=>console.warn('백그라운드 동기화 실패:', e));
 
