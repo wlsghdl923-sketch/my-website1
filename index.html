@@ -804,34 +804,54 @@ async function saveAll(){
 }
 
 /* ══ Supabase에서 모든 데이터 불러오기 ══ */
+function _applyMap(map){
+  if(map['hub_tabs'])     { TABS=map['hub_tabs'];         ss('hub_tabs',TABS); }
+  if(map['hub_cards'])    { CARDS=map['hub_cards'];       ss('hub_cards',CARDS); }
+  if(map['hub_cdocs'])    { CARD_DOCS=map['hub_cdocs'];   ss('hub_cdocs',CARD_DOCS); }
+  if(map['hub_events'])   { EVENTS=map['hub_events'];     ss('hub_events',EVENTS); }
+  if(map['hub_specials']) { SPECIALS=map['hub_specials']; ss('hub_specials',SPECIALS); }
+  if(map['hub_presets'])  { PRESETS=map['hub_presets'];   ss('hub_presets',PRESETS); }
+  if(map['hub_cal_name']) { CAL_NAME=map['hub_cal_name']; ss('hub_cal_name',CAL_NAME); }
+  if(map['hub_active'])   { ACTIVE=map['hub_active'];     ss('hub_active',ACTIVE); }
+  if(map['hub_cfg'])      { CFG=map['hub_cfg'];           ss('hub_cfg',CFG); }
+  if(map['hub_colors'])   { COLORS=map['hub_colors'];     ss('hub_colors',COLORS); }
+}
+
 async function initData(){
-  const overlay = document.getElementById('loadingOverlay');
-  if(overlay) overlay.style.display='flex';
+  const hasCacheData = localStorage.getItem('hub_cfg') !== null;
 
-  try{
-    const {data, error} = await _sb.from('site_data').select('key, value');
-    if(error){
-      console.warn('Supabase 불러오기 실패, 로컬 캐시 사용:', error.message);
-    } else if(data && data.length > 0){
-      const map = {};
-      data.forEach(row => map[row.key] = row.value);
+  if(hasCacheData){
+    _sb.from('site_data').select('key, value').then(({data,error})=>{
+      if(!error && data && data.length > 0){
+        const map={};
+        data.forEach(row=>map[row.key]=row.value);
+        _applyMap(map);
+        if(typeof applyColors==='function') applyColors();
+        if(typeof applyConfig==='function') applyConfig();
+        if(typeof renderSection==='function' && !IS_SHARE){
+          renderSection('docs');renderSection('webtoon');
+          if(typeof renderLegend==='function') renderLegend();
+          if(typeof renderMonthly==='function') renderMonthly();
+        }
+      }
+    }).catch(e=>console.warn('백그라운드 동기화 실패:', e));
 
-      if(map['hub_tabs'])     { TABS=map['hub_tabs'];         ss('hub_tabs',TABS); }
-      if(map['hub_cards'])    { CARDS=map['hub_cards'];       ss('hub_cards',CARDS); }
-      if(map['hub_cdocs'])    { CARD_DOCS=map['hub_cdocs'];   ss('hub_cdocs',CARD_DOCS); }
-      if(map['hub_events'])   { EVENTS=map['hub_events'];     ss('hub_events',EVENTS); }
-      if(map['hub_specials']) { SPECIALS=map['hub_specials']; ss('hub_specials',SPECIALS); }
-      if(map['hub_presets'])  { PRESETS=map['hub_presets'];   ss('hub_presets',PRESETS); }
-      if(map['hub_cal_name']) { CAL_NAME=map['hub_cal_name']; ss('hub_cal_name',CAL_NAME); }
-      if(map['hub_active'])   { ACTIVE=map['hub_active'];     ss('hub_active',ACTIVE); }
-      if(map['hub_cfg'])      { CFG=map['hub_cfg'];           ss('hub_cfg',CFG); }
-      if(map['hub_colors'])   { COLORS=map['hub_colors'];     ss('hub_colors',COLORS); }
+  } else {
+    const overlay = document.getElementById('loadingOverlay');
+    if(overlay) overlay.style.display='flex';
+    try{
+      const {data, error} = await _sb.from('site_data').select('key, value');
+      if(!error && data && data.length > 0){
+        const map={};
+        data.forEach(row=>map[row.key]=row.value);
+        _applyMap(map);
+      }
+    }catch(e){
+      console.warn('네트워크 오류, 기본값 사용:', e);
     }
-  }catch(e){
-    console.warn('네트워크 오류, 로컬 캐시 사용:', e);
+    if(overlay) overlay.style.display='none';
   }
-
-  if(overlay) overlay.style.display='none';
+}
 }
 
 /* ══ 공유 모드 ══ */
