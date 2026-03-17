@@ -1455,6 +1455,12 @@ let CAL_NAME = ls('hub_cal_name','캘린더');
 let ACTIVE   = ls('hub_active',  {docs:'이론',webtoon:'개인작품'});
 let CFG      = ls('hub_cfg',     DEF_CFG);
 let COLORS   = ls('hub_colors',  DEF_COLORS);
+let CAL_DOC_CFG = {}; // Supabase에서 로드됨
+let CAL_CFG = {defaultView:'m',todayColor:'#2E9E50',holidayColor:'#E84060',defaultColor:'#D91F3E'};
+const DEF_PROCESSES_DEFAULT=['스토리기획','콘티','선화','채색','교정','식자편집','로컬','납품','연재','런칭프로모션','연참 및 팝업배너'];
+let PROCESSES = [...DEF_PROCESSES_DEFAULT]; // Supabase 로드 후 교체됨
+let ASSIGNEE_SETS = []; // Supabase 로드 후 채워짐
+let CAL_DISPLAY = {labelMode:'task'}; // Supabase 로드 후 채워짐
 
 /* ══ Supabase에 데이터 저장 ══ */
 /* ══ Supabase 저장 상태 관리 ══ */
@@ -1515,25 +1521,24 @@ async function saveAll(){
   _sbFailCount=0;
   _setSbStatus('saving','저장 중...');
 
-  const calCfgVal = typeof CAL_CFG !== 'undefined' ? CAL_CFG : null;
-  const calDocCfgVal = typeof CAL_DOC_CFG !== 'undefined' ? CAL_DOC_CFG : null;
+  // 모든 변수가 최상단에 선언되므로 undefined 체크 불필요
   const saves=[
-    _sbSet('hub_tabs',     TABS),
-    _sbSet('hub_cards',    CARDS),
-    _sbSet('hub_cdocs',    CARD_DOCS),
-    _sbSet('hub_events',   EVENTS),
-    _sbSet('hub_specials', SPECIALS),
-    _sbSet('hub_presets',  PRESETS),
-    _sbSet('hub_cal_name', CAL_NAME),
-    _sbSet('hub_active',   ACTIVE),
-    _sbSet('hub_cfg',      CFG),
-    _sbSet('hub_colors',   COLORS),
-    _sbSet('hub_processes', PROCESSES),
+    _sbSet('hub_tabs',        TABS),
+    _sbSet('hub_cards',       CARDS),
+    _sbSet('hub_cdocs',       CARD_DOCS),
+    _sbSet('hub_events',      EVENTS),
+    _sbSet('hub_specials',    SPECIALS),
+    _sbSet('hub_presets',     PRESETS),
+    _sbSet('hub_cal_name',    CAL_NAME),
+    _sbSet('hub_active',      ACTIVE),
+    _sbSet('hub_cfg',         CFG),
+    _sbSet('hub_colors',      COLORS),
+    _sbSet('hub_processes',   PROCESSES),
     _sbSet('hub_assignee_sets', ASSIGNEE_SETS),
     _sbSet('hub_cal_display', CAL_DISPLAY),
+    _sbSet('hub_cal_cfg',     CAL_CFG),
+    _sbSet('hub_cal_doc_cfg', CAL_DOC_CFG),
   ];
-  if(calCfgVal)    saves.push(_sbSet('hub_cal_cfg',     calCfgVal));
-  if(calDocCfgVal) saves.push(_sbSet('hub_cal_doc_cfg', calDocCfgVal));
 
   const results = await Promise.allSettled(saves);
   const failedResults = results.filter(r=>r.status==='rejected'||(r.value&&!r.value.ok));
@@ -1593,8 +1598,12 @@ async function initData(){
       const map={};
       rows.forEach(row=>map[row.key]=row.value);
       _applyMap(map);
-      if(map['hub_cal_cfg'])     { CAL_CFG=map['hub_cal_cfg'];     applyCalCfg(); }
+      // 코드 하단에서 선언되던 변수들도 여기서 명시적으로 복원
+      if(map['hub_cal_cfg'])     { CAL_CFG=map['hub_cal_cfg'];         applyCalCfg(); }
       if(map['hub_cal_doc_cfg']) { CAL_DOC_CFG=map['hub_cal_doc_cfg']; }
+      if(map['hub_processes'])   { PROCESSES=map['hub_processes']; }
+      if(map['hub_assignee_sets']){ ASSIGNEE_SETS=map['hub_assignee_sets']; }
+      if(map['hub_cal_display']) { CAL_DISPLAY=map['hub_cal_display']; }
       if(typeof applyColors==='function') applyColors();
       if(typeof applyConfig==='function') applyConfig();
     }
@@ -2922,8 +2931,7 @@ function saveCalDocRename(){
 }
 
 /* ══ CAL DOC SETTINGS (태그 필터 다중 선택 + 재생성) ══ */
-let CAL_DOC_CFG=ls('hub_cal_doc_cfg',{});
-let _calDocSelectedTag=null;  // unused now
+let _calDocSelectedTag=null;
 
 function openCalDocSettings(){
   const docs=CARD_DOCS[_curCard]||[];const d=docs.find(x=>x.id===_curDocId);if(!d)return;
@@ -3468,12 +3476,12 @@ function renderTagFilter(){
 }
 
 /* ══ 캘린더 설정 ══ */
-let CAL_CFG=ls('hub_cal_cfg',{defaultView:'m',todayColor:'#2E9E50',holidayColor:'#E84060',defaultColor:'#D91F3E'});
+// CAL_CFG — 최상단으로 이동됨
 const DEF_PROCESSES=['스토리기획','콘티','선화','채색','교정','식자편집','로컬','납품','연재','런칭프로모션','연참 및 팝업배너'];
-let PROCESSES=ls('hub_processes', DEF_PROCESSES);
-let ASSIGNEE_SETS=ls('hub_assignee_sets', []);
+// PROCESSES — 최상단으로 이동됨
+// ASSIGNEE_SETS — 최상단으로 이동됨
 // CAL_DISPLAY: 캘린더 표기 설정 — task/process/project/project+process/process+task/all/episode/name
-let CAL_DISPLAY=ls('hub_cal_display',{labelMode:'task'});
+// CAL_DISPLAY — 최상단으로 이동됨
 
 /* ══ 캘린더 표기 레이블 생성 ══ */
 function getEvLabel(ev){
